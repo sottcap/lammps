@@ -143,23 +143,25 @@ void FixBD::initial_integrate(int /*vflag*/)
   if (igroup == atom->firstgroup) nlocal = atom->nfirst;
 
   if (rmass) {
+    const int * const type = atom->type;
     for (int i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         dtfm = dtf / rmass[i];
         for(int d=0;d<3;d++) {
           rforce = sqrt(gfac*rmass[i])*random->gaussian();
-          v[i][d] = (f[i][d] * damp + rforce);
+          v[i][d] = (f[i][d] * damp * ratio[type[i]] + rforce);
           x[i][d] += dtv * v[i][d];
         }
       }
 
   } else {
+    const int * const type = atom->type;
     for (int i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         dtfm = dtf / mass[type[i]];
         for(int d=0;d<3;d++) {
           rforce = sqrt(gfac*mass[type[i]])*random->gaussian();
-          v[i][d] = (f[i][d] * damp + rforce);
+          v[i][d] = (f[i][d] * damp  * ratio[type[i]] + rforce);
           x[i][d] += dtv * v[i][d];
         }
       }

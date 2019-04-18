@@ -47,12 +47,13 @@ void FixBDOMP::initial_integrate(int /* vflag */)
 #if defined (_OPENMP)
 #pragma omp parallel for private(i) default(none) schedule(static)
 #endif
+    const int * const type = atom->type;
     for (i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
         for(int d=0;d<3;d++) {
           double rforce = sqrt(gfac*rmass[i])*random->gaussian();
-          v[i][d] = (f[i][d] * damp + rforce);
+          v[i][d] = (f[i][d] * damp * ratio[type[i]] + rforce);
           x[i][d] += dtv * v[i][d];
         }
       }
@@ -68,7 +69,7 @@ void FixBDOMP::initial_integrate(int /* vflag */)
         const double dtfm = dtf / mass[type[i]];
         for(int d=0;d<3;d++) {
           double rforce = sqrt(gfac*mass[type[i]])*random->gaussian();
-          v[i][d] = (f[i][d] * damp + rforce);
+          v[i][d] = (f[i][d] * damp * ratio[type[i]] + rforce);
           x[i][d] += dtv * v[i][d];
         }
       }
