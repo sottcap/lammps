@@ -44,7 +44,7 @@ FixBD::FixBD(LAMMPS *lmp, int narg, char **arg) :
 
   ratio = new double[atom->ntypes+1];
 
-  for(int i=0;i<atom->ntypes;i++) {
+  for(int i=1;i<=atom->ntypes;i++) {
     ratio[i] = 1.0;
   }
 
