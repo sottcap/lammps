@@ -44,10 +44,10 @@ void FixBDOMP::initial_integrate(int /* vflag */)
 
   if (atom->rmass) {
     const double * const rmass = atom->rmass;
+    const int * const type = atom->type;
 #if defined (_OPENMP)
 #pragma omp parallel for private(i) default(none) schedule(static)
 #endif
-    const int * const type = atom->type;
     for (i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
