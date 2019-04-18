@@ -35,9 +35,9 @@ void FixBDOMP::initial_integrate(int /* vflag */)
 {
   // update v and x of atoms in group
 
-  double **x = atom->x;
-  double **v = atom->v;
-  double **f = atom->f;
+  dbl3_t * _noalias const x = (dbl3_t *) atom->x[0];
+  dbl3_t * _noalias const v = (dbl3_t *) atom->v[0];
+  const dbl3_t * _noalias const f = (dbl3_t *) atom->f[0];
   const int * const mask = atom->mask;
   const int nlocal = (igroup == atom->firstgroup) ? atom->nfirst : atom->nlocal;
   int i;
@@ -51,11 +51,15 @@ void FixBDOMP::initial_integrate(int /* vflag */)
     for (i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
-        for(int d=0;d<3;d++) {
-          double rforce = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
-          v[i][d] = (f[i][d] * damp * ratio[type[i]] + rforce);
-          x[i][d] += dtv * v[i][d];
-        }
+        double rforce_x = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+        double rforce_y = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+        double rforce_z = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+        v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
+        v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
+        v[i].z = (f[i].z * damp * ratio[type[i]] + rforce_z);
+        x[i].x += dtv * v[i].x;
+        x[i].y += dtv * v[i].y;
+        x[i].z += dtv * v[i].z;
       }
 
   } else {
@@ -67,11 +71,15 @@ void FixBDOMP::initial_integrate(int /* vflag */)
     for (i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / mass[type[i]];
-        for(int d=0;d<3;d++) {
-          double rforce = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
-          v[i][d] = (f[i][d] * damp * ratio[type[i]] + rforce);
-          x[i][d] += dtv * v[i][d];
-        }
+        double rforce_x = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
+        double rforce_y = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
+        double rforce_z = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
+        v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
+        v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
+        v[i].z = (f[i].z * damp * ratio[type[i]] + rforce_z);
+        x[i].x += dtv * v[i].x;
+        x[i].y += dtv * v[i].y;
+        x[i].z += dtv * v[i].z;
       }
   }
 }
