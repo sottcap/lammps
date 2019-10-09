@@ -148,7 +148,7 @@ void FixBD::initial_integrate(int /*vflag*/)
       if (mask[i] & groupbit) {
         dtfm = dtf / rmass[i];
         for(int d=0;d<3;d++) {
-          rforce = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+          rforce = sqrt(gfac*ratio[type[i]])*random->gaussian();
           v[i][d] = (f[i][d] * damp * ratio[type[i]] + rforce);
           x[i][d] += dtv * v[i][d];
         }
@@ -160,7 +160,7 @@ void FixBD::initial_integrate(int /*vflag*/)
       if (mask[i] & groupbit) {
         dtfm = dtf / mass[type[i]];
         for(int d=0;d<3;d++) {
-          rforce = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
+          rforce = sqrt(gfac*ratio[type[i]])*random->gaussian();
           v[i][d] = (f[i][d] * damp  * ratio[type[i]] + rforce);
           x[i][d] += dtv * v[i][d];
         }
