@@ -52,12 +52,9 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
         double rforce_x, rforce_y, rforce_z;
-        #pragma omp critical
         rforce_x = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
-        #pragma omp critical
         rforce_y = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
-        #pragma omp critical
-        double rforce_z = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+        rforce_z = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
         v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
         v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
         v[i].z = (f[i].z * damp * ratio[type[i]] + rforce_z);
@@ -76,11 +73,8 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / mass[type[i]];
         double rforce_x, rforce_y, rforce_z;
-        #pragma omp critical
         rforce_x = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
-        #pragma omp critical
         rforce_y = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
-        #pragma omp critical
         rforce_z = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
         v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
         v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
@@ -98,6 +92,7 @@ void FixBDOMP::final_integrate()
 {
   // update v of atoms in group
 
+#if 0
   dbl3_t * _noalias const v = (dbl3_t *) atom->v[0];
   const dbl3_t * _noalias const f = (dbl3_t *) atom->f[0];
   const int * const mask = atom->mask;
@@ -135,5 +130,6 @@ void FixBDOMP::final_integrate()
         */
       }
   }
+#endif // 0
 }
 
