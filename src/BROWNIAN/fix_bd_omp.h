@@ -30,9 +30,6 @@ class FixBDOMP : public FixBD {
   virtual ~FixBDOMP();
   virtual void initial_integrate(int);
   virtual void final_integrate();
-
-protected:
-  class RanMars **random_thr;
 };
 
 }

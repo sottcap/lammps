@@ -25,23 +25,7 @@ typedef struct { double x,y,z; } dbl3_t;
 /* ---------------------------------------------------------------------- */
 
 FixBDOMP::FixBDOMP(LAMMPS *lmp, int narg, char **arg) :
-  FixBD(lmp, narg, arg) 
-{ 
-  suffix_flag |= Suffix::OMP;
-  random_thr = NULL;
-  nthreads = 0;
-}
-
-FixBDOMP::~FixBDOMP()
-{ 
-  if (random_thr) {
-    for (int i=1; i < nthreads; ++i)
-      delete random_thr[i];
-
-    delete[] random_thr;
-    random_thr = NULL;
-  }
-}
+  FixBD(lmp, narg, arg) { }
 
 /* ----------------------------------------------------------------------
    allow for both per-type and per-atom mass
@@ -49,34 +33,6 @@ FixBDOMP::~FixBDOMP()
 
 void FixBDOMP::initial_integrate(int /* vflag */)
 {
-  if (nthreads != comm->nthreads) {
-    if (random_thr) {
-      for (int i=1; i < nthreads; ++i)
-        delete random_thr[i];
-
-      delete[] random_thr;
-    }
-
-    nthreads = comm->nthreads;
-    random_thr = new RanMars*[nthreads];
-    for (int i=1; i < nthreads; ++i)
-      random_thr[i] = NULL;
-
-    // to ensure full compatibility with the serial Brownian style
-    // we use is random number generator instance for thread 0
-    random_thr[0] = random;
-  }
-
-#if defined(_OPENMP)
-  tid = omp_get_thread_num();
-#endif
-
-#if defined(_OPENMP)
-#pragma omp parallel default(none) shared(eflag,vflag)
-#endif
-  if ((tid > 0) && (random_thr[tid] == NULL))
-    random_thr[tid] = new RanMars(Pair::lmp, seed + comm->me
-                                  + comm->nprocs*tid);
   // update v and x of atoms in group
 
   dbl3_t * _noalias const x = (dbl3_t *) atom->x[0];
