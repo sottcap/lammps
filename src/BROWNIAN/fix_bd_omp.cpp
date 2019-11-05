@@ -52,6 +52,8 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
         double rforce_x, rforce_y, rforce_z;
+        #pragma omp critical
+        {
         rforce_x = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
         rforce_y = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
         rforce_z = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
@@ -61,6 +63,7 @@ void FixBDOMP::initial_integrate(int /* vflag */)
         x[i].x += dtv * v[i].x;
         x[i].y += dtv * v[i].y;
         x[i].z += dtv * v[i].z;
+        }
       }
 
   } else {
@@ -73,6 +76,8 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / mass[type[i]];
         double rforce_x, rforce_y, rforce_z;
+        #pragma omp critical
+        {
         rforce_x = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
         rforce_y = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
         rforce_z = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
@@ -82,6 +87,7 @@ void FixBDOMP::initial_integrate(int /* vflag */)
         x[i].x += dtv * v[i].x;
         x[i].y += dtv * v[i].y;
         x[i].z += dtv * v[i].z;
+        }
       }
   }
 }
