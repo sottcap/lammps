@@ -27,9 +27,12 @@ namespace LAMMPS_NS {
 class FixBDOMP : public FixBD {
  public:
   FixBDOMP(class LAMMPS *, int, char **);
-  virtual ~FixBDOMP() {}
+  virtual ~FixBDOMP();
   virtual void initial_integrate(int);
   virtual void final_integrate();
+
+protected:
+  class RanMars **random_thr;
 };
 
 }
