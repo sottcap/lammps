@@ -64,11 +64,11 @@ FixBD::FixBD(LAMMPS *lmp, int narg, char **arg) :
   int iarg = 5;
   while (iarg < narg) {
     if (strcmp(arg[iarg],"scale") == 0) {
-      if (iarg+3 > narg) error->all(FLERR,"Illegal fix langevin command");
+      if (iarg+3 > narg) error->all(FLERR,"Illegal fix bd command");
       int itype = force->inumeric(FLERR,arg[iarg+1]);
       double scale = force->numeric(FLERR,arg[iarg+2]);
       if (itype <= 0 || itype > atom->ntypes)
-        error->all(FLERR,"Illegal fix langevin command");
+        error->all(FLERR,"Illegal fix bd command");
       ratio[itype] = scale;
       iarg += 3;
     }

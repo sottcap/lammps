@@ -56,6 +56,7 @@ void FixBDOMP::initial_integrate(int /* vflag */)
         {
         rforce_x = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
         rforce_y = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+        #pragma omp critical
         rforce_z = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
         v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
         v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
