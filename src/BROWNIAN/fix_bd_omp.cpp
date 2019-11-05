@@ -25,7 +25,23 @@ typedef struct { double x,y,z; } dbl3_t;
 /* ---------------------------------------------------------------------- */
 
 FixBDOMP::FixBDOMP(LAMMPS *lmp, int narg, char **arg) :
-  FixBD(lmp, narg, arg) { }
+  FixBD(lmp, narg, arg) 
+{ 
+  suffix_flag |= Suffix::OMP;
+  random_thr = NULL;
+  nthreads = 0;
+}
+
+FixBDOMP::~FixBDOMP()
+{ 
+  if (random_thr) {
+    for (int i=1; i < nthreads; ++i)
+      delete random_thr[i];
+
+    delete[] random_thr;
+    random_thr = NULL;
+  }
+}
 
 /* ----------------------------------------------------------------------
    allow for both per-type and per-atom mass
@@ -33,6 +49,34 @@ FixBDOMP::FixBDOMP(LAMMPS *lmp, int narg, char **arg) :
 
 void FixBDOMP::initial_integrate(int /* vflag */)
 {
+  if (nthreads != comm->nthreads) {
+    if (random_thr) {
+      for (int i=1; i < nthreads; ++i)
+        delete random_thr[i];
+
+      delete[] random_thr;
+    }
+
+    nthreads = comm->nthreads;
+    random_thr = new RanMars*[nthreads];
+    for (int i=1; i < nthreads; ++i)
+      random_thr[i] = NULL;
+
+    // to ensure full compatibility with the serial Brownian style
+    // we use is random number generator instance for thread 0
+    random_thr[0] = random;
+  }
+
+#if defined(_OPENMP)
+  tid = omp_get_thread_num();
+#endif
+
+#if defined(_OPENMP)
+#pragma omp parallel default(none) shared(eflag,vflag)
+#endif
+  if ((tid > 0) && (random_thr[tid] == NULL))
+    random_thr[tid] = new RanMars(Pair::lmp, seed + comm->me
+                                  + comm->nprocs*tid);
   // update v and x of atoms in group
 
   dbl3_t * _noalias const x = (dbl3_t *) atom->x[0];
@@ -52,19 +96,15 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
         double rforce_x, rforce_y, rforce_z;
-        #pragma omp critical
-        {
-        rforce_x = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
-        rforce_y = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
-        #pragma omp critical
-        rforce_z = sqrt(gfac*ratio[type[i]]*rmass[i])*random->gaussian();
+        rforce_x = sqrt(gfac*ratio[type[i]])*random_thr[tid]->gaussian();
+        rforce_y = sqrt(gfac*ratio[type[i]])*random_thr[tid]->gaussian();
+        rforce_z = sqrt(gfac*ratio[type[i]])*random_thr[tid]->gaussian();
         v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
         v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
         v[i].z = (f[i].z * damp * ratio[type[i]] + rforce_z);
         x[i].x += dtv * v[i].x;
         x[i].y += dtv * v[i].y;
         x[i].z += dtv * v[i].z;
-        }
       }
 
   } else {
@@ -77,18 +117,15 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / mass[type[i]];
         double rforce_x, rforce_y, rforce_z;
-        #pragma omp critical
-        {
-        rforce_x = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
-        rforce_y = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
-        rforce_z = sqrt(gfac*ratio[type[i]]*mass[type[i]])*random->gaussian();
+        rforce_x = sqrt(gfac*ratio[type[i]])*random_thr[tid]->gaussian();
+        rforce_y = sqrt(gfac*ratio[type[i]])*random_thr[tid]->gaussian();
+        rforce_z = sqrt(gfac*ratio[type[i]])*random_thr[tid]->gaussian();
         v[i].x = (f[i].x * damp * ratio[type[i]] + rforce_x);
         v[i].y = (f[i].y * damp * ratio[type[i]] + rforce_y);
         v[i].z = (f[i].z * damp * ratio[type[i]] + rforce_z);
         x[i].x += dtv * v[i].x;
         x[i].y += dtv * v[i].y;
         x[i].z += dtv * v[i].z;
-        }
       }
   }
 }
