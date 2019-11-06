@@ -108,7 +108,7 @@ void FixBD::init()
 
   dtv = update->dt;
   dtf = update->dt * force->ftm2v;
-  gfac = 2*boltz*temp*damp/update->dt/force->mvv2e;
+  gfac = 2*boltz*temp/damp/update->dt/force->mvv2e;
 
   if (strstr(update->integrate_style,"respa"))
     step_respa = ((Respa *) update->integrate)->step;
