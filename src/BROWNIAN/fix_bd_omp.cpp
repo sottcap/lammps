@@ -60,9 +60,9 @@ void FixBDOMP::initial_integrate(int /* vflag */)
         rforce_y = sqrt(gfac*ratio_[type[i]])*random->gaussian();
         rforce_z = sqrt(gfac*ratio_[type[i]])*random->gaussian();
         }
-        v[i].x = (f[i].x * damp_ * ratio_[type[i]] + rforce_x);
-        v[i].y = (f[i].y * damp_ * ratio_[type[i]] + rforce_y);
-        v[i].z = (f[i].z * damp_ * ratio_[type[i]] + rforce_z);
+        v[i].x = (f[i].x / damp_ * ratio_[type[i]] + rforce_x);
+        v[i].y = (f[i].y / damp_ * ratio_[type[i]] + rforce_y);
+        v[i].z = (f[i].z / damp_ * ratio_[type[i]] + rforce_z);
         x[i].x += dtv * v[i].x;
         x[i].y += dtv * v[i].y;
         x[i].z += dtv * v[i].z;
@@ -84,9 +84,9 @@ void FixBDOMP::initial_integrate(int /* vflag */)
         rforce_y = sqrt(gfac*ratio_[type[i]])*random->gaussian();
         rforce_z = sqrt(gfac*ratio_[type[i]])*random->gaussian();
         }
-        v[i].x = (f[i].x * damp_ * ratio_[type[i]] + rforce_x);
-        v[i].y = (f[i].y * damp_ * ratio_[type[i]] + rforce_y);
-        v[i].z = (f[i].z * damp_ * ratio_[type[i]] + rforce_z);
+        v[i].x = (f[i].x / damp_ * ratio_[type[i]] + rforce_x);
+        v[i].y = (f[i].y / damp_ * ratio_[type[i]] + rforce_y);
+        v[i].z = (f[i].z / damp_ * ratio_[type[i]] + rforce_z);
         x[i].x += dtv * v[i].x;
         x[i].y += dtv * v[i].y;
         x[i].z += dtv * v[i].z;
