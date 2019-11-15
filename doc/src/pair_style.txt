@@ -142,6 +142,8 @@ accelerated styles exist.
 "coul/streitz"_pair_coul.html - Coulombics via Streitz/Mintmire Slater orbitals
 "coul/wolf"_pair_coul.html - Coulombics via Wolf potential
 "coul/wolf/cs"_pair_cs.html - ditto with core/shell adjustments
+"dblyukawa"_pair_dblyukawa.html - Double Yukawa Potential
+"dblyukawa/colloid"_pair_dblyukawa_colloid.html - Double Yukawa Potential for Colloids
 "dpd"_pair_dpd.html - dissipative particle dynamics (DPD)
 "dpd/fdt"_pair_dpd_fdt.html - DPD for constant temperature and pressure
 "dpd/fdt/energy"_pair_dpd_fdt.html - DPD for constant energy and enthalpy

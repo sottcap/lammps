@@ -61,7 +61,7 @@ FixBD::FixBD(LAMMPS *lmp, int narg, char **arg) :
 
   random = new RanMars(lmp,seed + comm->me);
 
-  int iarg = 5;
+  int iarg = 6;
   while (iarg < narg) {
     if (strcmp(arg[iarg],"scale") == 0) {
       if (iarg+3 > narg) error->all(FLERR,"Illegal fix bd command");
