@@ -148,9 +148,53 @@ void FixBD::initial_integrate(int /*vflag*/)
       if (mask[i] & groupbit) {
         dtfm = dtf / rmass[i];
         for(int d=0;d<3;d++) {
+          v[i][d] = (f[i][d] / damp * ratio[type[i]]);
+          x[i][d] += dtv * 0.5*v[i][d];
+        }
+      }
+
+  } else {
+    const int * const type = atom->type;
+    for (int i = 0; i < nlocal; i++)
+      if (mask[i] & groupbit) {
+        dtfm = dtf / mass[type[i]];
+        for(int d=0;d<3;d++) {
+          v[i][d] = (f[i][d] / damp  * ratio[type[i]]);
+          x[i][d] += dtv * 0.5*v[i][d];
+        }
+      }
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixBD::final_integrate()
+{
+  double dtfm;
+  double rforce;
+  double boltz = force->boltz;
+
+  // update v and x of atoms in group
+
+  double **x = atom->x;
+  double **v = atom->v;
+  double **f = atom->f;
+  double *rmass = atom->rmass;
+  double *mass = atom->mass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+  if (rmass) {
+    const int * const type = atom->type;
+    for (int i = 0; i < nlocal; i++)
+      if (mask[i] & groupbit) {
+        dtfm = dtf / rmass[i];
+        for(int d=0;d<3;d++) {
           rforce = sqrt(gfac*ratio[type[i]])*random->gaussian();
           v[i][d] = (f[i][d] / damp * ratio[type[i]] + rforce);
-          x[i][d] += dtv * v[i][d];
+          x[i][d] += dtv * (0.5*v[i][d] + 0.5*rforce);
         }
       }
 
@@ -162,49 +206,8 @@ void FixBD::initial_integrate(int /*vflag*/)
         for(int d=0;d<3;d++) {
           rforce = sqrt(gfac*ratio[type[i]])*random->gaussian();
           v[i][d] = (f[i][d] / damp  * ratio[type[i]] + rforce);
-          x[i][d] += dtv * v[i][d];
+          x[i][d] += dtv * (0.5*v[i][d] + 0.5*rforce);
         }
-      }
-  }
-}
-
-/* ---------------------------------------------------------------------- */
-
-void FixBD::final_integrate()
-{
-  double dtfm;
-
-  // update v of atoms in group
-
-  double **v = atom->v;
-  double **f = atom->f;
-  double *rmass = atom->rmass;
-  double *mass = atom->mass;
-  int *type = atom->type;
-  int *mask = atom->mask;
-  int nlocal = atom->nlocal;
-  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
-
-  if (rmass) {
-    for (int i = 0; i < nlocal; i++)
-      if (mask[i] & groupbit) {
-        dtfm = dtf / rmass[i];
-        /*
-        v[i][0] += dtfm * f[i][0];
-        v[i][1] += dtfm * f[i][1];
-        v[i][2] += dtfm * f[i][2];
-        */
-      }
-
-  } else {
-    for (int i = 0; i < nlocal; i++)
-      if (mask[i] & groupbit) {
-        dtfm = dtf / mass[type[i]];
-        /*
-        v[i][0] += dtfm * f[i][0];
-        v[i][1] += dtfm * f[i][1];
-        v[i][2] += dtfm * f[i][2];
-        */
       }
   }
 }
