@@ -13,7 +13,7 @@
 ------------------------------------------------------------------------- */
 
 #include <cmath>
-#include "pair_dblyukawa_omp.h"
+#include "pair_dblyukawa_colloid_omp.h"
 #include "atom.h"
 #include "comm.h"
 #include "force.h"
@@ -76,7 +76,7 @@ void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
 {
   int i,j,ii,jj,jnum,itype,jtype;
   double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair;
-  double rsq,r2inv,r,rinv,screening1,screening2,forceyukawa,factor;
+  double rsq,r2inv,r,rinv,screening1,screening2,forceyukawa,factor,radi,radj;
   int *ilist,*jlist,*numneigh,**firstneigh;
 
   evdwl = 0.0;
@@ -86,6 +86,8 @@ void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
   const int * _noalias const type = atom->type;
   const int nlocal = atom->nlocal;
   const double * _noalias const special_lj = force->special_lj;
+  double *radius = atom->radius;
+
   double fxtmp,fytmp,fztmp;
 
   ilist = list->ilist;
