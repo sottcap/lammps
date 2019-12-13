@@ -79,6 +79,8 @@ OPT.
 "coul/streitz"_pair_coul.html,
 "coul/wolf (ko)"_pair_coul.html,
 "coul/wolf/cs"_pair_cs.html,
+"dblyukawa"_pair_dblyukawa.html,
+"dblyukawa/colloid"_pair_dblyukawa_colloid.html,
 "dpd (gio)"_pair_dpd.html,
 "dpd/fdt"_pair_dpd_fdt.html,
 "dpd/fdt/energy (k)"_pair_dpd_fdt.html,
