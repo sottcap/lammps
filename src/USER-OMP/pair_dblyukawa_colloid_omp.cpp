@@ -25,7 +25,7 @@ using namespace LAMMPS_NS;
 
 /* ---------------------------------------------------------------------- */
 
-PairDblYukwaColloidOMP::PairDblYukwaColloidOMP(LAMMPS *lmp) :
+PairDblYukawaColloidOMP::PairDblYukawaColloidOMP(LAMMPS *lmp) :
   PairDblYukawaColloid(lmp), ThrOMP(lmp, THR_PAIR)
 {
   suffix_flag |= Suffix::OMP;
@@ -34,7 +34,7 @@ PairDblYukwaColloidOMP::PairDblYukwaColloidOMP(LAMMPS *lmp) :
 
 /* ---------------------------------------------------------------------- */
 
-void PairDblYukwaColloidOMP::compute(int eflag, int vflag)
+void PairDblYukawaColloidOMP::compute(int eflag, int vflag)
 {
   ev_init(eflag,vflag);
 
@@ -72,7 +72,7 @@ void PairDblYukwaColloidOMP::compute(int eflag, int vflag)
 }
 
 template <int EVFLAG, int EFLAG, int NEWTON_PAIR>
-void PairDblYukwaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
+void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
 {
   int i,j,ii,jj,jnum,itype,jtype;
   double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair;
@@ -156,7 +156,7 @@ void PairDblYukwaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
 
 /* ---------------------------------------------------------------------- */
 
-double PairDblYukwaColloidOMP::memory_usage()
+double PairDblYukawaColloidOMP::memory_usage()
 {
   double bytes = memory_usage_thr();
   bytes += PairYukawa::memory_usage();
