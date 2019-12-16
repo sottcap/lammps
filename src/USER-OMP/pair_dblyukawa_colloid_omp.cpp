@@ -76,7 +76,7 @@ void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
 {
   int i,j,ii,jj,jnum,itype,jtype;
   double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair;
-  double rsq,r2inv,r,rinv,screening1,screening2,forceyukawa,factor,radi,radj;
+  double rsq,r2inv,r,rinv,rinv2,screening1,screening2,forceyukawa,factor,radi,radj;
   int *ilist,*jlist,*numneigh,**firstneigh;
 
   evdwl = 0.0;
@@ -122,13 +122,14 @@ void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
       jtype = type[j];
       radj = radius[j];
 
-      if (rsq < cutsq[itype][jtype] && rsq > (radi+radj)*(radi+radj)) {
+      if (rsq < cutsq[itype][jtype]) {
+//        rsq = (rsq > (radi+radj)*(radi+radj)*1.1*1.1) ? rsq : (radi+radj)*(radi+radj)*1.1*1.1;
         r2inv = 1.0/rsq;
         r = sqrt(rsq);
         rinv = 1.0/r;
         screening1 = exp(-kappas[0]*(r-(radi+radj)));
         screening2 = exp(-kappas[1]*(r-(radi+radj)));
-        forceyukawa = a1[itype][jtype] * screening1 * (kappas[0] + rinv) + a2[itype][jtype] * screening2 * (kappas[1] + rinv);
+        forceyukawa = a1[itype][jtype] * screening1 * (kappas[0] + rinv) + a2[itype][jtype] * screening2  * (kappas[1] + rinv);
 
         fpair = factor*forceyukawa * r2inv;
 

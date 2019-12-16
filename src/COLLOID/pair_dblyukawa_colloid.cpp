@@ -42,7 +42,7 @@ void PairDblYukawaColloid::compute(int eflag, int vflag)
 {
   int i,j,ii,jj,inum,jnum,itype,jtype;
   double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair,radi,radj;
-  double rsq,r,rinv,screening1, screening2,forceyukawa,factor;
+  double rsq,r,rinv,rinv2,screening1, screening2,forceyukawa,factor;
   int *ilist,*jlist,*numneigh,**firstneigh;
 
   evdwl = 0.0;
@@ -86,13 +86,16 @@ void PairDblYukawaColloid::compute(int eflag, int vflag)
       radj = radius[j];
 
       if (rsq < cutsq[itype][jtype]) {
+//        rsq = (rsq > (radi+radj)*(radi+radj)*0.9*0.9) ? rsq : (radi+radj)*(radi+radj)*0.9*0.9;
         r = sqrt(rsq);
         rinv = 1.0/r;
+        rinv2 = 1.0/rsq;
         screening1 = exp(-kappas[0]*(r-(radi+radj)));
         screening2 = exp(-kappas[1]*(r-(radi+radj)));
-        forceyukawa = a1[itype][jtype] * screening1 + a2[itype][jtype] * screening2;
+//        forceyukawa = a1[itype][jtype] * screening1 + a2[itype][jtype] * screening2;
+        forceyukawa = a1[itype][jtype] * screening1 * (kappas[0] + rinv) + a2[itype][jtype] * screening2  * (kappas[1] + rinv);
 
-        fpair = factor*forceyukawa * rinv;
+        fpair = factor*forceyukawa * rinv2;
 
         f[i][0] += delx*fpair;
         f[i][1] += dely*fpair;
