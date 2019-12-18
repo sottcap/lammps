@@ -111,13 +111,13 @@ void FixBDOMP::final_integrate()
         double rforce_x, rforce_y, rforce_z;
         #pragma omp critical
         {
-        rforce_x = sqrt(gfac*ratio_[type[i]])*random->gaussian();
-        rforce_y = sqrt(gfac*ratio_[type[i]])*random->gaussian();
-        rforce_z = sqrt(gfac*ratio_[type[i]])*random->gaussian();
+        rforce_x = sqrt(gfa/ratio_[type[i]])*random->gaussian();
+        rforce_y = sqrt(gfa/ratio_[type[i]])*random->gaussian();
+        rforce_z = sqrt(gfa/ratio_[type[i]])*random->gaussian();
         }
-        v[i].x = (f[i].x / damp_ * ratio_[type[i]] + rforce_x);
-        v[i].y = (f[i].y / damp_ * ratio_[type[i]] + rforce_y);
-        v[i].z = (f[i].z / damp_ * ratio_[type[i]] + rforce_z);
+        v[i].x = (f[i].x / damp_ / ratio_[type[i]] + rforce_x);
+        v[i].y = (f[i].y / damp_ / ratio_[type[i]] + rforce_y);
+        v[i].z = (f[i].z / damp_ / ratio_[type[i]] + rforce_z);
         x[i].x += dtv * (0.5*v[i].x + 0.5*rforce_x);
         x[i].y += dtv * (0.5*v[i].y + 0.5*rforce_y);
         x[i].z += dtv * (0.5*v[i].z + 0.5*rforce_z);
@@ -135,13 +135,13 @@ void FixBDOMP::final_integrate()
         double rforce_x, rforce_y, rforce_z;
         #pragma omp critical
         {
-        rforce_x = sqrt(gfac*ratio_[type[i]])*random->gaussian();
-        rforce_y = sqrt(gfac*ratio_[type[i]])*random->gaussian();
-        rforce_z = sqrt(gfac*ratio_[type[i]])*random->gaussian();
+        rforce_x = sqrt(gfac/ratio_[type[i]])*random->gaussian();
+        rforce_y = sqrt(gfac/ratio_[type[i]])*random->gaussian();
+        rforce_z = sqrt(gfac/ratio_[type[i]])*random->gaussian();
         }
-        v[i].x = (f[i].x / damp_ * ratio_[type[i]] + rforce_x);
-        v[i].y = (f[i].y / damp_ * ratio_[type[i]] + rforce_y);
-        v[i].z = (f[i].z / damp_ * ratio_[type[i]] + rforce_z);
+        v[i].x = (f[i].x / damp_ / ratio_[type[i]] + rforce_x);
+        v[i].y = (f[i].y / damp_ / ratio_[type[i]] + rforce_y);
+        v[i].z = (f[i].z / damp_ / ratio_[type[i]] + rforce_z);
         x[i].x += dtv * (0.5*v[i].x + 0.5*rforce_x);
         x[i].y += dtv * (0.5*v[i].y + 0.5*rforce_y);
         x[i].z += dtv * (0.5*v[i].z + 0.5*rforce_z);
