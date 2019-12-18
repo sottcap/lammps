@@ -150,6 +150,7 @@ void FixBD::initial_integrate(int /*vflag*/)
         for(int d=0;d<3;d++) {
           v[i][d] = (f[i][d] / damp / ratio[type[i]]);
           x[i][d] += dtv * 0.5*v[i][d];
+          v[i][d] = 0;
         }
       }
 
@@ -161,6 +162,7 @@ void FixBD::initial_integrate(int /*vflag*/)
         for(int d=0;d<3;d++) {
           v[i][d] = (f[i][d] / damp  / ratio[type[i]]);
           x[i][d] += dtv * 0.5*v[i][d];
+          v[i][d] = 0;
         }
       }
   }
@@ -195,7 +197,7 @@ void FixBD::final_integrate()
           rforce = sqrt(gfac/ratio[type[i]])*random->gaussian();
           v[i][d] = (f[i][d] / damp / ratio[type[i]] + rforce);
           x[i][d] += dtv * (0.5*v[i][d] + 0.5*rforce);
-          // v[i][d] -= rforce;
+          v[i][d] = 0;
         }
       }
 
@@ -208,6 +210,7 @@ void FixBD::final_integrate()
           rforce = sqrt(gfac/ratio[type[i]])*random->gaussian();
           v[i][d] = (f[i][d] / damp  / ratio[type[i]] + rforce);
           x[i][d] += dtv * (0.5*v[i][d] + 0.5*rforce);
+          v[i][d] = 0;
           // v[i][d] -= rforce;
         }
       }
