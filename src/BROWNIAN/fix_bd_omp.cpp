@@ -54,12 +54,15 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / rmass[i];
         #pragma omp critical
-        v[i].x = (f[i].x / damp_ * ratio_[type[i]]);
-        v[i].y = (f[i].y / damp_ * ratio_[type[i]]);
-        v[i].z = (f[i].z / damp_ * ratio_[type[i]]);
+        v[i].x = (f[i].x / damp_ / ratio_[type[i]]);
+        v[i].y = (f[i].y / damp_ / ratio_[type[i]]);
+        v[i].z = (f[i].z / damp_ / ratio_[type[i]]);
         x[i].x += dtv * 0.5*v[i].x;
         x[i].y += dtv * 0.5*v[i].y;
         x[i].z += dtv * 0.5*v[i].z;
+
+        // For pressure calculation (fix later)
+        v[i].x = v[i].y = v[i].z = 0;
       }
 
   } else {
@@ -72,12 +75,15 @@ void FixBDOMP::initial_integrate(int /* vflag */)
       if (mask[i] & groupbit) {
         const double dtfm = dtf / mass[type[i]];
         #pragma omp critical
-        v[i].x = (f[i].x / damp_ * ratio_[type[i]]);
-        v[i].y = (f[i].y / damp_ * ratio_[type[i]]);
-        v[i].z = (f[i].z / damp_ * ratio_[type[i]]);
+        v[i].x = (f[i].x / damp_ / ratio_[type[i]]);
+        v[i].y = (f[i].y / damp_ / ratio_[type[i]]);
+        v[i].z = (f[i].z / damp_ / ratio_[type[i]]);
         x[i].x += dtv * 0.5*v[i].x;
         x[i].y += dtv * 0.5*v[i].y;
         x[i].z += dtv * 0.5*v[i].z;
+
+        // For pressure calculation (fix later)
+        v[i].x = v[i].y = v[i].z = 0;
       }
   }
 }
@@ -121,6 +127,9 @@ void FixBDOMP::final_integrate()
         x[i].x += dtv * (0.5*v[i].x + 0.5*rforce_x);
         x[i].y += dtv * (0.5*v[i].y + 0.5*rforce_y);
         x[i].z += dtv * (0.5*v[i].z + 0.5*rforce_z);
+
+        // For pressure calculation (fix later)
+        v[i].x = v[i].y = v[i].z = 0;
       }
 
   } else {
@@ -145,6 +154,9 @@ void FixBDOMP::final_integrate()
         x[i].x += dtv * (0.5*v[i].x + 0.5*rforce_x);
         x[i].y += dtv * (0.5*v[i].y + 0.5*rforce_y);
         x[i].z += dtv * (0.5*v[i].z + 0.5*rforce_z);
+
+        // For pressure calculation (fix later)
+        v[i].x = v[i].y = v[i].z = 0;
       }
   }
 }
