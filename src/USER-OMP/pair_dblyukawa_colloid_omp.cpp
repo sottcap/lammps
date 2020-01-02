@@ -87,6 +87,7 @@ void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
   const int nlocal = atom->nlocal;
   const double * _noalias const special_lj = force->special_lj;
   double *radius = atom->radius;
+  const tagint *molecule = atom->molecule;
 
   double fxtmp,fytmp,fztmp;
 
@@ -111,6 +112,7 @@ void PairDblYukawaColloidOMP::eval(int iifrom, int iito, ThrData * const thr)
     fxtmp=fytmp=fztmp=0.0;
 
     for (jj = 0; jj < jnum; jj++) {
+      if (molecule[ii] == molecule[jj]) continue;
       j = jlist[jj];
       factor = special_lj[sbmask(j)];
       j &= NEIGHMASK;

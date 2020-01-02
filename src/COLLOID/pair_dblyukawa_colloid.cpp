@@ -55,6 +55,8 @@ void PairDblYukawaColloid::compute(int eflag, int vflag)
   int nlocal = atom->nlocal;
   double *special_lj = force->special_lj;
   int newton_pair = force->newton_pair;
+  tagint *tag = atom->tag;
+  tagint *molecule = atom->molecule;
 
   inum = list->inum;
   ilist = list->ilist;
@@ -74,6 +76,7 @@ void PairDblYukawaColloid::compute(int eflag, int vflag)
     jnum = numneigh[i];
 
     for (jj = 0; jj < jnum; jj++) {
+      if (molecule[ii] == molecule[jj]) continue;
       j = jlist[jj];
       factor = special_lj[sbmask(j)];
       j &= NEIGHMASK;
